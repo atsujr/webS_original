@@ -16,6 +16,8 @@ gem 'omniauth-google-oauth2'
 gem 'google-api-client'
 # Gemfile
 gem "ruby-openai" 
+
+gem 'cloudinary'
 group :development do
   gem 'pry'
 end

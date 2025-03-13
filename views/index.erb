@@ -5,51 +5,13 @@
   <title>おまかせスケジューラ</title>
 </head>
 <body>
-  <h1>おまかせスケジューラ</h1>
-
   <% if @authorized %>
-    <p>ログインしています。</p>
-    <p>ユーザー名: <%= @user_name %></p>
-    <p>メールアドレス: <%= @user_email %></p>
-    <% if @user_picture %>
-      <img src="<%= @user_picture %>" alt="プロフィール画像" width="100">
-    <% end %>
-
-    <hr>
-
-    <h2>自然言語で予定を追加</h2>
-    <p>例：<br>「明日10時から11時まで会議」<br>「明後日の9時から3時間田中と遊び」など</p>
-    <form action="/add_event_by_nlp" method="POST">
-      <div>
-        <textarea name="nlp_input" rows="3" cols="50" placeholder="自然言語で入力してください"></textarea>
-      </div>
-      <button type="submit">自然言語でカレンダーに登録</button>
-    </form>
-
-    <hr>
-
-    <h2>直接フォーム入力で予定を追加</h2>
-    <form action="/add_event" method="POST">
-      <div>
-        <label for="summary">タイトル:</label>
-        <input type="text" name="summary" id="summary" required>
-      </div>
-      <div>
-        <label for="start_time">開始日時:</label>
-        <input type="datetime-local" name="start_time" id="start_time" required>
-      </div>
-      <div>
-        <label for="end_time">終了日時:</label>
-        <input type="datetime-local" name="end_time" id="end_time" required>
-      </div>
-      <div>
-        <label for="description">詳細:</label>
-        <textarea name="description" id="description"></textarea>
-      </div>
-      <button type="submit">フォーム入力でカレンダーに登録</button>
+    <form action="/add_event_by_nlp" class = "input-area" method="POST">
+      <textarea name="nlp_input" class="plan-input" placeholder="予定を入力してください"></textarea>
+      <button type="submit" class = "add-btn">予定を追加する</button>
     </form>
   <% else %>
-    <p>Googleアカウントを認証してください。</p>
+    <p>Googleアカウントを認証してください。デプロイできてるか確認！</p>
     <a href="/auth">Googleでログイン</a>
   <% end %>
 </body>

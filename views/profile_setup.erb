@@ -1,0 +1,42 @@
+<form action="/profile_setup" method="post" enctype="multipart/form-data" class = "profile-form">
+<div class = "profile-setting">
+  <div class="profile_image_setting">
+    <img id="preview" src="" >
+    <input type="file" name="profile_image" id="fileElem" style="display:none" >
+    <button id="fileSelect" type="button" class="profile-file-button">画像をアップロードする</button>
+  </div>
+  <div class = "profile-input-area">
+    <label for="display_name">名前</label>
+    <p><%= @user.google_name %></p>
+    <label for="display_name">メールアドレス</label>
+    <p><%= @user.email %></p> 
+    <label for="display_name">表示名</label>
+    <input type="text" name="display_name" class = "display_name_input" placeholder="表示名を入力してください">
+  </div>
+</div>
+<button type="submit" class = "add-btn">保存</button>
+</form>
+<script>
+  const fileInput = document.getElementById('fileElem');
+  const preview   = document.getElementById('preview');
+
+  fileInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) {
+      preview.src = "";
+      return;
+    }
+    const imageUrl = URL.createObjectURL(file);
+    preview.src = imageUrl;
+  });
+</script>
+<script>
+  const fileSelect = document.getElementById("fileSelect");
+  const fileElem = document.getElementById("fileElem");
+
+  fileSelect.addEventListener("click", (e) => {
+    if (fileElem) {
+      fileElem.click();
+    }
+  }, false);
+</script>

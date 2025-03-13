@@ -13,6 +13,12 @@ require 'net/http'
 require 'uri'
 require 'openai'     # 追加
 require 'dotenv'
+require './models'
+require 'cloudinary' 
+require 'cloudinary/uploader'
+require 'cloudinary/utils'
+
+
 set :bind, '0.0.0.0'
 enable :sessions
 
@@ -23,24 +29,32 @@ OAUTH_SCOPE = [
   'https://www.googleapis.com/auth/userinfo.profile'
 ].join(' ')
 
-# 必要な設定（GCPで取得した認証情報を記載）
-
 Dotenv.load
-
 # 環境変数を取得
 CLIENT_ID     = ENV['CLIENT_ID']
 CLIENT_SECRET = ENV['CLIENT_SECRET']
 REDIRECT_URI  = ENV['REDIRECT_URI']
 OPENAI_API_KEY = ENV['OPENAI_API_KEY']
+# Cloudinary 設定
+Cloudinary.config do |config|
+  config.cloud_name = ENV['CLOUD_NAME']
+  config.api_key    = ENV['CLOUDINARY_API_KEY']
+  config.api_secret = ENV['CLOUDINARY_API_SECRET']
+end
+
+before do
+    login_check unless request.path_info == '/login' || request.path_info == '/auth' || request.path_info == '/auth/callback'
+end
 # トップページ
 get '/' do
   @authorized = session[:access_token] ? true : false
-  @user_email = session[:user_email]
-  @user_name  = session[:user_name]
-  @user_picture  = session[:user_picture]
+  @user = User.find(session[:user_id])
+  p @user
   erb :index
 end
-
+get '/login' do
+  erb :login
+end
 # (1) 初回ログイン用のOAuthリクエスト
 get '/auth' do
   auth_client = build_oauth_client_for_login
@@ -51,7 +65,6 @@ get '/auth' do
   redirect authorization_uri.to_s
 end
 
-# (2) Google OAuth コールバック
 get '/auth/callback' do
   auth_client = build_oauth_client_for_login
   auth_client.code = params[:code]
@@ -61,7 +74,7 @@ get '/auth/callback' do
   session[:refresh_token] = auth_client.refresh_token
   session[:expires_at]    = auth_client.expires_at
 
-  # ユーザー情報取得
+  # ユーザー情報を取得
   uri = URI.parse("https://www.googleapis.com/oauth2/v1/userinfo?alt=json")
   req = Net::HTTP::Get.new(uri)
   req["Authorization"] = "Bearer #{auth_client.access_token}"
@@ -71,12 +84,57 @@ get '/auth/callback' do
   end
   userinfo = JSON.parse(res.body)
 
-  session[:user_email]   = userinfo["email"]
-  session[:user_name]    = userinfo["name"]
-  session[:user_picture] = userinfo["picture"]  # プロフィール画像URL
+  email    = userinfo["email"]
+  g_name   = userinfo["name"]      # Googleアカウントの名前
+  g_pic    = userinfo["picture"]   # Googleアカウントのプロフィール画像URL
+
+  # DBにユーザーがいれば取得、いなければ作成
+  user = User.find_or_create_by(email: email)
+  session[:user_id]   = user.id
+  session[:user_email] = email
+  if user.display_name.nil? || user.display_name.strip == ""
+    user.google_name         = g_name unless g_name.nil?
+    user.email              = email
+    user.save
+    redirect '/profile_setup'
+  else
+    # 既に設定済みなら通常のメイン画面へ
+    session[:user_id]   = user.id
+    p "ユーザ-ID"
+    p session[:user_id]
+    # session[:user_display_name] = user.display_name
+    # session[:user_profile_image_url] = user.profile_image_url
+    redirect '/'
+  end
+end
+# 表示名やプロフィール画像の設定フォームを表示
+get '/profile_setup' do
+  # ログイン中のユーザーを取ってくる
+  @user = User.find(session[:user_id])
+  
+  erb :profile_setup
+end
+
+# フォームから送信された表示名とプロフィール画像をDBに保存
+post '/profile_setup' do
+  user = User.find(session[:user_id])
+
+  # フォームからの値
+  new_display_name = params[:display_name]
+  
+  if params[:profile_image]
+    image = params[:profile_image]  # ファイル情報を取得
+    tempfile = image[:tempfile]     # 一時ファイルパスを取得
+    upload = Cloudinary::Uploader.upload(tempfile.path)  # Cloudinary にアップロード
+    img_url = upload['url']  # アップロードされた画像のURLを取得
+    user.profile_image_url = img_url
+  end
+  user.display_name = new_display_name.strip if new_display_name
+  user.save
 
   redirect '/'
 end
+
 
 # (3) 直接フォームから予定追加する既存のルート
 post '/add_event' do
@@ -250,11 +308,6 @@ def call_chatgpt_and_extract_info(text)
   end
 end
 
-
-# =================================================
-# 以下、クライアント生成のためのメソッドたち
-# =================================================
-
 # 初回ログイン用（まだアクセストークンが無い状態）のクライアント生成
 def build_oauth_client_for_login
   client_secrets = Google::APIClient::ClientSecrets.new({
@@ -307,3 +360,13 @@ def get_google_client
 
   auth_client
 end
+get '/logout' do
+  session.clear 
+  redirect '/login' 
+end
+
+private
+    def login_check
+        # ログインしていない場合ログイン画面に遷移させtrueを返す、ログインしている場合falseを返す
+        return redirect '/login'  unless session[:user_email]
+    end
