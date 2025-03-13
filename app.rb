@@ -17,7 +17,7 @@ require './models'
 require 'cloudinary' 
 require 'cloudinary/uploader'
 require 'cloudinary/utils'
-
+require 'active_support/all'  # Railsを使っていない場合、必要
 
 set :bind, '0.0.0.0'
 enable :sessions
@@ -49,7 +49,9 @@ end
 get '/' do
   @authorized = session[:access_token] ? true : false
   @user = User.find(session[:user_id])
-  p @user
+  @posted = false
+  p "モーダルを表示するか？"
+  p @posted
   erb :index
 end
 get '/login' do
@@ -136,44 +138,6 @@ post '/profile_setup' do
 end
 
 
-# (3) 直接フォームから予定追加する既存のルート
-post '/add_event' do
-  client = get_google_client
-  unless client
-    redirect '/'
-  end
-
-  summary = params[:summary]
-  start_time_obj = Time.parse("#{params[:start_time]} +09:00")
-  end_time_obj   = Time.parse("#{params[:end_time]} +09:00")
-  description = params[:description]
-
-  event = Google::Apis::CalendarV3::Event.new(
-    summary: summary,
-    description: description,
-    start: Google::Apis::CalendarV3::EventDateTime.new(
-      date_time: start_time_obj.iso8601,
-      time_zone: 'Asia/Tokyo'
-    ),
-    end: Google::Apis::CalendarV3::EventDateTime.new(
-      date_time: end_time_obj.iso8601,
-      time_zone: 'Asia/Tokyo'
-    )
-  )
-
-  service = Google::Apis::CalendarV3::CalendarService.new
-  service.authorization = client
-
-  begin
-    result = service.insert_event('primary', event)
-    @message = "イベントを追加しました: #{result.summary}"
-  rescue => e
-    @message = "イベント追加に失敗しました: #{e.message}"
-  end
-
-  erb :result
-end
-
 ########################################
 # 自然言語入力から予定を追加するためのルート
 ########################################
@@ -185,7 +149,9 @@ post '/add_event_by_nlp' do
 
   nlp_input = params[:nlp_input]  # ユーザーが入力した自然言語
   if nlp_input.nil? || nlp_input.strip == ""
+    @message_title = "予定の追加に失敗しました。"
     @message = "入力が空です。"
+    @posted = true
     return erb :result
   end
 
@@ -193,7 +159,9 @@ post '/add_event_by_nlp' do
   extracted_info = call_chatgpt_and_extract_info(nlp_input)
 
   if extracted_info.nil?
+    @message_title = "予定の追加に失敗しました。"
     @message = "ChatGPT から有効な情報を取得できませんでした。"
+    @posted = true
     return erb :result
   end
 
@@ -222,13 +190,19 @@ post '/add_event_by_nlp' do
 
   begin
     result = service.insert_event('primary', event)
-    @message = "自然言語入力からイベントを追加しました: #{result.summary}"
+    @message_title = "以下の予定がGoogleカレンダーに追加されました。"
+    @message = "予定の内容: #{result.summary}\n" \
+           "開始日時: #{result.start.date_time.in_time_zone('Asia/Tokyo').strftime('%Y年%m月%d日 %H時%M分')}\n" \
+           "終了日時: #{result.end.date_time.in_time_zone('Asia/Tokyo').strftime('%Y年%m月%d日 %H時%M分')}"
   rescue => e
+    @message_title = "予定の追加に失敗しました。"
     @message = "イベント追加に失敗しました: #{e.message}"
   end
+  @posted = true
 
-  erb :result
+  erb :index
 end
+  
 
 
 ########################################
