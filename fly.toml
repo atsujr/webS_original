@@ -5,6 +5,8 @@
 
 app = 'googleauth-black-field-767'
 primary_region = 'sea'
+[deploy]
+  release_command = "rake db:migrate"
 
 [build]
 
