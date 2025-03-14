@@ -44,12 +44,11 @@ end
 
 before do
     login_check unless request.path_info == '/login' || request.path_info == '/auth' || request.path_info == '/auth/callback'
-    @authorized = session[:access_token] ? true : false
-    @current_user ||= User.find_by(id: session[:user_id])
+    @authorized = session[:user_display_name] ? true : false
+    @user = User.find_by(id: session[:user_id]) if session[:user_id]
 end
 # トップページ
 get '/' do
-  @user = User.find(session[:user_id])
   @schedules = Schedule.order(created_at: :desc)
   @posted = false
   p "モーダルを表示するか？"
@@ -106,7 +105,7 @@ get '/auth/callback' do
     session[:user_id]   = user.id
     p "ユーザ-ID"
     p session[:user_id]
-    # session[:user_display_name] = user.display_name
+    session[:user_display_name] = user.display_name
     # session[:user_profile_image_url] = user.profile_image_url
     redirect '/'
   end
@@ -132,8 +131,11 @@ post '/profile_setup' do
     upload = Cloudinary::Uploader.upload(tempfile.path)  # Cloudinary にアップロード
     img_url = upload['url']  # アップロードされた画像のURLを取得
     user.profile_image_url = img_url
+  else
+    user.profile_image_url = "/img/logo.png" 
   end
   user.display_name = new_display_name.strip if new_display_name
+  session[:user_display_name] = user.display_name
   user.save
 
   redirect '/'
@@ -149,7 +151,7 @@ post '/schedules/:id/like' do
   # 例: ログイン中ユーザーを current_user として扱う
   #     すでにいいね済みかのチェックを入れたい場合は下記に条件分岐を追加してください。
   schedule = Schedule.find(params[:id])
-  schedule.likes.create(user_id: @current_user.id)  # いいねを新規作成
+  schedule.likes.create(user_id: @user.id)  # いいねを新規作成
   redirect '/'
 end
 

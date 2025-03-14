@@ -29,7 +29,7 @@
                   <form action="/schedules/<%= schedule.id %>/like" method="POST">
                     <button type="submit" style="border: none; background: none; cursor: pointer;">
                       <div class = "schedule_reaction_like">
-                        <% if schedule.liked_users.include?(@current_user) %>
+                        <% if schedule.liked_users.include?(@user) %>
                           <!-- いいね済みの場合 -->
                           <img src="/img/hearted.png" alt="" class="logo">
                         <% else %>
