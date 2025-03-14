@@ -301,3 +301,9 @@ a {
 .schedule_reaction img {
   width: 24px;
 }
+.schedule_reaction_like {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}

@@ -45,6 +45,7 @@ end
 before do
     login_check unless request.path_info == '/login' || request.path_info == '/auth' || request.path_info == '/auth/callback'
     @authorized = session[:access_token] ? true : false
+    @current_user ||= User.find_by(id: session[:user_id])
 end
 # トップページ
 get '/' do
@@ -144,6 +145,13 @@ get '/schedule' do
   erb :myschedule
 end
 
+post '/schedules/:id/like' do
+  # 例: ログイン中ユーザーを current_user として扱う
+  #     すでにいいね済みかのチェックを入れたい場合は下記に条件分岐を追加してください。
+  schedule = Schedule.find(params[:id])
+  schedule.likes.create(user_id: @current_user.id)  # いいねを新規作成
+  redirect '/'
+end
 
 ########################################
 # 自然言語入力から予定を追加するためのルート

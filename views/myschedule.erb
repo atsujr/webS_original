@@ -1,7 +1,7 @@
 <div class = "post-container" style="margin-top: 0px; padding-top: 0px; height: 100vh;">
     <% if @schedules != nil %>
       <div class = "post-area">
-      <h2><%= @user.display_name %>の予定一覧</h2>
+      <h2><%= @user.display_name %>の追加した予定一覧</h2>
         <% @schedules.each do |schedule| %>
           <div class = "schedule_post_container">
             <div class = "schedule_post_box">
@@ -12,7 +12,11 @@
                   <p><%= schedule.nlp_input %></p>
                 </div>
                 <div class = "schedule_reaction">
-                  <img src="/img/heart.png" alt="" class="logo">
+                  <div class = "schedule_reaction_like">
+                    <img src="/img/heart.png" alt="" class="logo">
+                    <!-- いいね数表示 -->
+                    <p><%= schedule.likes.count %></p>
+                  </div>
                   <img src="/img/comment.png" alt="" class="logo">
                 </div>
               </div>

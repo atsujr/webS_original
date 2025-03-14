@@ -26,7 +26,21 @@
                   <p><%= schedule.nlp_input %></p>
                 </div>
                 <div class = "schedule_reaction">
-                  <img src="/img/heart.png" alt="" class="logo">
+                  <form action="/schedules/<%= schedule.id %>/like" method="POST">
+                    <button type="submit" style="border: none; background: none; cursor: pointer;">
+                      <div class = "schedule_reaction_like">
+                        <% if schedule.liked_users.include?(@current_user) %>
+                          <!-- いいね済みの場合 -->
+                          <img src="/img/hearted.png" alt="" class="logo">
+                        <% else %>
+                          <!-- 未いいねの場合 -->
+                          <img src="/img/heart.png" alt="" class="logo">
+                        <% end %>
+                        <!-- いいね数表示 -->
+                        <p><%= schedule.likes.count %></p>
+                      </div>
+                    </button>
+                  </form>
                   <img src="/img/comment.png" alt="" class="logo">
                 </div>
               </div>
