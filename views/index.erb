@@ -7,12 +7,10 @@
   </style>
 </head>
 <body>
-  <% if @authorized %>
-    <form action="/add_event_by_nlp" class="input-area" method="POST">
-      <textarea name="nlp_input" class="plan-input" placeholder="予定を入力してください"></textarea>
-      <button type="submit" class="add-btn">予定を追加する</button>
-    </form>
-  <% end %>
+  <form action="/add_event_by_nlp" class="input-area" method="POST">
+    <textarea name="nlp_input" class="plan-input" placeholder="予定を入力してください"></textarea>
+    <button type="submit" class="add-btn">予定を追加する</button>
+  </form>
 
   <!-- モーダルの要素(overlay + window) -->
   <% if @posted %>
