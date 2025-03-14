@@ -1,21 +1,7 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <title>おまかせスケジューラ</title>
-  <style>
-  </style>
-</head>
-<body>
-  <form action="/add_event_by_nlp" class="input-area" method="POST">
-    <textarea name="nlp_input" class="plan-input" placeholder="予定を入力してください"></textarea>
-    <button type="submit" class="add-btn">予定を追加する</button>
-  </form>
-
-  <!-- 保存された予定のリスト -->
-  <div class = "post-container">
+<div class = "post-container" style="margin-top: 0px; padding-top: 0px; height: 100vh;">
     <% if @schedules != nil %>
       <div class = "post-area">
+      <h2><%= @user.display_name %>の予定一覧</h2>
         <% @schedules.each do |schedule| %>
           <div class = "schedule_post_container">
             <div class = "schedule_post_box">
@@ -37,18 +23,3 @@
       </div>
     <% end %>
   </div>
-
-  <!-- モーダルの要素(overlay + window) -->
-  <% if @posted %>
-    <div class="overlay" id="overlay">
-      <div class="modal" id="modal">
-        <h3 id="modal-title"><%= @message_title %></h3>
-        <p id="modal-message"><%= @message.gsub("\n", "<br>") %></p>
-        <a href="/" class="close-btn">
-          OK
-        </a>
-      </div>
-    </div>
-  <% end %>
-</body>
-</html>

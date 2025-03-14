@@ -44,10 +44,10 @@ end
 
 before do
     login_check unless request.path_info == '/login' || request.path_info == '/auth' || request.path_info == '/auth/callback'
+    @authorized = session[:access_token] ? true : false
 end
 # トップページ
 get '/' do
-  @authorized = session[:access_token] ? true : false
   @user = User.find(session[:user_id])
   @schedules = Schedule.order(created_at: :desc)
   @posted = false
@@ -136,6 +136,12 @@ post '/profile_setup' do
   user.save
 
   redirect '/'
+end
+# 自分の予定を確認するページ
+get '/schedule' do
+  @user = User.find(session[:user_id])
+  @schedules = @user.schedules.order(created_at: :desc)  # ユーザーの予定を取得
+  erb :myschedule
 end
 
 
