@@ -14,7 +14,7 @@
 		<% if @authorized %>
 			<div class="header-right">
 				<a href="/logout" class="logout-link">Log Out</a>
-				<button class="create-btn">予定を作成</button>
+				<a href="/"class="create-btn">予定を作成</a>
 				<a href="/schedule">
           <img class="profile-image" src="<%= @user.profile_image_url %>" alt="User Image">
         </a>
