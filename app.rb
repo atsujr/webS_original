@@ -49,6 +49,7 @@ end
 get '/' do
   @authorized = session[:access_token] ? true : false
   @user = User.find(session[:user_id])
+  @schedules = Schedule.order(created_at: :desc)
   @posted = false
   p "モーダルを表示するか？"
   p @posted
@@ -194,12 +195,26 @@ post '/add_event_by_nlp' do
     @message = "予定の内容: #{result.summary}\n" \
            "開始日時: #{result.start.date_time.in_time_zone('Asia/Tokyo').strftime('%Y年%m月%d日 %H時%M分')}\n" \
            "終了日時: #{result.end.date_time.in_time_zone('Asia/Tokyo').strftime('%Y年%m月%d日 %H時%M分')}"
+    user = User.find(session[:user_id])
+
+    schedule = user.schedules.create(
+    summary: result.summary,
+    start_time: result.start.date_time,  # datetime型のまま保存
+    end_time: result.end.date_time,      # datetime型のまま保存
+    nlp_input: nlp_input
+  )
+
+  if schedule.persisted?
+    p "予定がデータベースに保存されました: ID=#{schedule.id}"
+  else
+    p "予定の保存に失敗しました: #{schedule.errors.full_messages}"
+  end
   rescue => e
     @message_title = "予定の追加に失敗しました。"
     @message = "イベント追加に失敗しました: #{e.message}"
   end
   @posted = true
-
+  @schedules = @schedules = Schedule.order(created_at: :desc)
   erb :index
 end
   

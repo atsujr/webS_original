@@ -9,5 +9,13 @@ ActiveRecord::Base.default_timezone = :local
 # models/user.rb
 
 class User < ActiveRecord::Base
-  # この中にロジックを記述
+  has_many :schedules, dependent: :destroy
+end
+class Schedule < ActiveRecord::Base
+  belongs_to :user
+
+  validates :summary, presence: true
+  validates :start_time, presence: true
+  validates :end_time, presence: true
+  validates :user, presence: true
 end

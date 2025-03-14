@@ -12,6 +12,32 @@
     <button type="submit" class="add-btn">予定を追加する</button>
   </form>
 
+  <!-- 保存された予定のリスト -->
+  <div class = "post-container">
+    <% if @schedules != nil %>
+      <div class = "post-area">
+        <% @schedules.each do |schedule| %>
+          <div class = "schedule_post_container">
+            <div class = "schedule_post_box">
+              <img class="profile-image" src="<%= schedule.user.profile_image_url %>" alt="User Image">
+              <div class = "schedule_box">
+                <div class = "schedule_infomation">
+                  <p class = "schedule-post-name"><%= schedule.user.display_name %></p>
+                  <p><%= schedule.nlp_input %></p>
+                </div>
+                <div class = "schedule_reaction">
+                  <img src="/img/heart.png" alt="" class="logo">
+                  <img src="/img/comment.png" alt="" class="logo">
+                </div>
+              </div>
+            </div>
+            <p class = "post-created-at"><%= schedule.created_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d %H:%M") %></p>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
   <!-- モーダルの要素(overlay + window) -->
   <% if @posted %>
     <div class="overlay" id="overlay">
