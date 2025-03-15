@@ -234,8 +234,23 @@ post '/add_event_by_nlp' do
   erb :index
 end
   
+get '/schedules/:id/comment' do
+  @schedule = Schedule.find(params[:id])
+  @comments = @schedule.comments.order(created_at: :desc)
+  erb :comment
+end
+post '/schedules/:id/comment' do
 
-
+  schedule = Schedule.find(params[:id])
+  comment = schedule.comments.new(
+    user_id: @user.id,
+    content: params[:content]
+  )
+  if comment.save
+    p comment
+  end 
+  redirect "/schedules/#{params[:id]}/comment"
+end
 ########################################
 # ChatGPT API を呼び出して情報抽出するためのメソッド
 ########################################

@@ -21,3 +21,5 @@ EXPOSE 4567
 
 # Run the application
 CMD ["ruby", "app.rb"]
+
+RUN gem cleanup minitest && rm -rf /usr/local/bundle/cache/*.gem

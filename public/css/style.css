@@ -298,6 +298,10 @@ a {
   align-items: center;
   gap: 33px;
 }
+.schedule_reaction p {
+  font-size: 13px;
+}
+
 .schedule_reaction img {
   width: 24px;
 }
@@ -306,4 +310,47 @@ a {
   align-items: center;
   justify-content: center;
   gap: 5px;
+}
+
+.comment-container {
+  background-color: #f0f2f5;
+}
+#post-form {
+  width: 100%;
+  position: relative;
+}
+
+#post-form textarea {
+  width: 100%;
+  padding: 20px;
+  border: none;
+  border-top: 1px solid #dbdbdb;
+  /* padding: 0 0 92px 0; */
+  height: 132px;
+  resize: none;
+  font-size: 20px;
+}
+
+#post-form textarea::placeholder {
+  color: #878b93;
+}
+
+#post-form button {
+  position: absolute;
+  right: 16px;
+  bottom: 24px;
+  background-color: #007bff;
+  border: none;
+  color: #fff;
+  border-radius: 30px;
+  padding: 12px 24px;
+  font-weight: bold;
+}
+
+.comment-box {
+  padding-top: 30px;
+  border-top: 1px solid #dbdbdb;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }

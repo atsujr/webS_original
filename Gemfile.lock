@@ -170,6 +170,7 @@ DEPENDENCIES
   concurrent-ruby (= 1.3.4)
   dotenv (~> 2.7)
   google-api-client
+  minitest (= 5.25.4)
   omniauth-google-oauth2
   pg (~> 1.2)
   pry

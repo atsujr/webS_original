@@ -16,7 +16,7 @@ gem 'omniauth-google-oauth2'
 gem 'google-api-client'
 # Gemfile
 gem "ruby-openai" 
-
+gem 'minitest', '= 5.25.4'
 gem 'cloudinary'
 group :development do
   gem 'pry'

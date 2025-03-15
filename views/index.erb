@@ -27,7 +27,7 @@
                 </div>
                 <div class = "schedule_reaction">
                   <form action="/schedules/<%= schedule.id %>/like" method="POST">
-                    <button type="submit" style="border: none; background: none; cursor: pointer;">
+                    <button type="submit" style="border: none; background: none; cursor: pointer; vertical-align: bottom;">
                       <div class = "schedule_reaction_like">
                         <% if schedule.liked_users.include?(@user) %>
                           <!-- いいね済みの場合 -->
@@ -41,7 +41,12 @@
                       </div>
                     </button>
                   </form>
-                  <img src="/img/comment.png" alt="" class="logo">
+                  <div class = "schedule_reaction_like">
+                    <a href="/schedules/<%= schedule.id %>/comment" style="text-decoration: none;">
+                      <img src="/img/comment.png" alt="" class="logo" style="vertical-align: bottom;">
+                    </a>
+                    <p><%= schedule.comments.count %></p>
+                  </div>
                 </div>
               </div>
             </div>

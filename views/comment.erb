@@ -1,0 +1,58 @@
+<div class = "comment-container">
+  <div class = "post-area" style = "gap: 0px;">
+    <div class = "schedule_post_container" style = "margin-bottom: 30px;">
+      <div class = "schedule_post_box">
+        <img class="profile-image" src="<%= @schedule.user.profile_image_url %>" alt="User Image" style="width: 50px; height: 50px;">
+        <div class = "schedule_box">
+          <div class = "schedule_infomation">
+            <p class = "schedule-post-name"><%= @schedule.user.display_name %></p>
+            <p><%= @schedule.nlp_input %></p>
+          </div>
+          <div class = "schedule_reaction">
+            <form action="/schedules/<%= @schedule.id %>/like" method="POST">
+              <button type="submit" style="border: none; background: none; cursor: pointer; vertical-align: bottom;">
+                <div class = "schedule_reaction_like">
+                  <% if @schedule.liked_users.include?(@user) %>
+                    <!-- いいね済みの場合 -->
+                    <img src="/img/hearted.png" alt="" class="logo">
+                  <% else %>
+                    <!-- 未いいねの場合 -->
+                    <img src="/img/heart.png" alt="" class="logo">
+                  <% end %>
+                  <!-- いいね数表示 -->
+                  <p><%= @schedule.likes.count %></p>
+                </div>
+              </button>
+            </form>
+            <div class = "schedule_reaction_like">
+              <img src="/img/comment.png" alt="" class="logo">
+              <p><%= @schedule.comments.count %></p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p class = "post-created-at"><%= @schedule.created_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d %H:%M") %></p>
+    </div>
+    <% if @schedule.user.display_name !=  @user.display_name%>
+      <form action="/schedules/<%= @schedule.id %>/comment" method="post" id="post-form">
+          <textarea type="text" name="content" placeholder="返信をポスト"></textarea>
+          <button type="submit">返信する</button>
+      </form>
+    <% end %>
+    <div class = "comment-box" style= "">
+      <% @comments.each do |comment| %>
+        <div class="schedule_post_container">
+          <div class = "schedule_post_box">
+            <img class="profile-image" src="<%= comment.user.profile_image_url %>" alt="User Image" style="width: 50px; height: 50px;">
+            <div class = "schedule_box">
+              <div class = "schedule_infomation">
+                <p class="schedule-post-name"><%= comment.user.display_name %></p>
+                <p><%= comment.content %></p>
+              </div>
+            </div>
+          </div>
+          <p class = "post-created-at"><%= comment.created_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d %H:%M") %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>

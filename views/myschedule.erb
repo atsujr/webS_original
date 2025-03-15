@@ -13,11 +13,22 @@
                 </div>
                 <div class = "schedule_reaction">
                   <div class = "schedule_reaction_like">
-                    <img src="/img/heart.png" alt="" class="logo">
+                    <% if schedule.liked_users.include?(@user) %>
+                      <!-- いいね済みの場合 -->
+                      <img src="/img/hearted.png" alt="" class="logo">
+                    <% else %>
+                      <!-- 未いいねの場合 -->
+                      <img src="/img/heart.png" alt="" class="logo">
+                    <% end %>
                     <!-- いいね数表示 -->
                     <p><%= schedule.likes.count %></p>
                   </div>
-                  <img src="/img/comment.png" alt="" class="logo">
+                  <div class = "schedule_reaction_like">
+                    <a href="/schedules/<%= schedule.id %>/comment" style="text-decoration: none;">
+                      <img src="/img/comment.png" alt="" class="logo" style="vertical-align: bottom;">
+                    </a>
+                    <p><%= schedule.comments.count %></p>
+                  </div>
                 </div>
               </div>
             </div>
