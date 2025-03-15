@@ -189,6 +189,7 @@ post '/add_event_by_nlp' do
   start_time_obj = extracted_info[:start_time] || (Time.now + 3600)
   end_time_obj   = extracted_info[:end_time]   || (Time.now + 7200)
   is_open = extracted_info[:is_open] || false
+  color = (extracted_info[:color] || 1).to_s
   event = Google::Apis::CalendarV3::Event.new(
     summary: summary,
     description: description,
@@ -199,7 +200,8 @@ post '/add_event_by_nlp' do
     end: Google::Apis::CalendarV3::EventDateTime.new(
       date_time: end_time_obj.iso8601,
       time_zone: 'Asia/Tokyo'
-    )
+    ),
+    color_id: color.to_s
   )
 
   service = Google::Apis::CalendarV3::CalendarService.new
@@ -273,14 +275,27 @@ def call_chatgpt_and_extract_info(text)
     - 日付が「今日」「明日」「明後日」のように指定されている場合は、上記の日付を基準に計算してください。
     - 「〇時間」や「〇分」などの表記がある場合、開始時間を元に終了時間を計算してください。
     - 終了時間の記載がない場合は、開始時間から1時間後の時間を計算し、終了時間に設定してください。
-    - 予定を非公開にしたいようなニュアンスのプロンプトがあった場合はisopenフィールドにtrueを設定してください。
+    - 文章の最後に[非公開]のプロンプトがあった場合はisopenフィールドにtrueを設定してください。
+    - colorフィールドはプロンプトに基づいて、以下のものから番号を1つ選択しください。指定がないときは1とすること。
+      1 ラベンダー  
+      2 セージ  
+      3 ブドウ  
+      4 フラミンゴ  
+      5 バナナ  
+      6 ミカン  
+      7 ピーコック  
+      8 グラファイト  
+      9 ブルーベリー  
+      10 バジル  
+      11 トマト
     形式は必ず JSON で出力してください。例:
     {
       "summary": "会議",
       "start_time": "2025-03-07T10:00:00+09:00",
       "end_time": "2025-03-07T11:00:00+09:00",
       "description": "田中さんとオンラインで",
-      "isopen": true
+      "isopen": true,
+      "color": 3
     }
   EOS
 
@@ -314,6 +329,7 @@ def call_chatgpt_and_extract_info(text)
     start_time_str = json_data["start_time"]
     end_time_str   = json_data["end_time"]
     is_open = json_data["isopen"]
+    color = json_data["color"]
     start_time = start_time_str && !start_time_str.empty? ? Time.parse(start_time_str) : nil
     end_time   = end_time_str   && !end_time_str.empty?   ? Time.parse(end_time_str)   : nil
     p "start_timeとend_time"
@@ -324,7 +340,8 @@ def call_chatgpt_and_extract_info(text)
       description: description,
       start_time: start_time,
       end_time: end_time,
-      is_open: is_open
+      is_open: is_open,
+      color: color
     }
   rescue => e
     p e.message

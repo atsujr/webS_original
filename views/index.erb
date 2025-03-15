@@ -8,7 +8,12 @@
 </head>
 <body>
   <form action="/add_event_by_nlp" class="input-area" method="POST">
-    <textarea name="nlp_input" class="plan-input" placeholder="予定を入力してください"></textarea>
+    <div class = "input-area-box">
+      <textarea name="nlp_input" class="plan-input" placeholder="予定を入力してください"></textarea>
+      <p>予定のカレンダー上での色を指定したい時には指定したい色を入力してください。<br>
+      また、予定を非公開にしたい場合は文章の最後に「非公開」と入力してください。</p>
+
+    </div>
     <button type="submit" class="add-btn">予定を追加する</button>
   </form>
 

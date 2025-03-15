@@ -214,7 +214,18 @@ a {
   flex-direction: column;
   gap: 65px;
 }
-
+.input-area-box {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.input-area-box p {
+  color: #878b93;
+  font-size: 12px;
+  text-align: center;
+}
 .plan-input {
   width: 100%;
   max-width: 700px;
@@ -225,6 +236,7 @@ a {
   border-radius: 12px;
   padding: 10px 15px;
   field-sizing: content;
+  resize: none;
 }
 .plan-input::placeholder {
   display: flex;
