@@ -13,35 +13,40 @@
   </form>
 
   <!-- 保存された予定のリスト -->
-  <div class = "post-container">
-    <% if @schedules != nil %>
-      <div class = "post-area">
+  <div class="post-container">
+    <% if @schedules %>
+      <div class="post-area">
         <% @schedules.each do |schedule| %>
-          <div class = "schedule_post_container">
-            <div class = "schedule_post_box">
+          <div class="schedule_post_container">
+            <div class="schedule_post_box">
               <img class="profile-image" src="<%= schedule.user.profile_image_url %>" alt="User Image" style="width: 50px; height: 50px;">
-              <div class = "schedule_box">
-                <div class = "schedule_infomation">
-                  <p class = "schedule-post-name"><%= schedule.user.display_name %></p>
+              <div class="schedule_box">
+                <div class="schedule_infomation">
+                  <p class="schedule-post-name"><%= schedule.user.display_name %></p>
                   <p><%= schedule.nlp_input %></p>
                 </div>
-                <div class = "schedule_reaction">
-                  <form action="/schedules/<%= schedule.id %>/like" method="POST">
-                    <button type="submit" style="border: none; background: none; cursor: pointer; vertical-align: bottom;">
-                      <div class = "schedule_reaction_like">
-                        <% if schedule.liked_users.include?(@user) %>
-                          <!-- いいね済みの場合 -->
-                          <img src="/img/hearted.png" alt="" class="logo">
-                        <% else %>
-                          <!-- 未いいねの場合 -->
+                <div class="schedule_reaction">
+                  <!-- いいねボタン -->
+                  <% if schedule.liked_users.include?(@user) %>
+                    <!-- いいね済み: ボタンなし、アイコンだけ表示 -->
+                    <div class="schedule_reaction_like">
+                      <img src="/img/hearted.png" alt="" class="logo">
+                      <p><%= schedule.likes.count %></p>
+                    </div>
+                  <% else %>
+                    <!-- 未いいねの場合、ボタンを表示 -->
+                    <form action="/schedules/<%= schedule.id %>/like" method="POST">
+                      <button type="submit" style="border: none; background: none; cursor: pointer; vertical-align: bottom;">
+                        <div class="schedule_reaction_like">
                           <img src="/img/heart.png" alt="" class="logo">
-                        <% end %>
-                        <!-- いいね数表示 -->
-                        <p><%= schedule.likes.count %></p>
-                      </div>
-                    </button>
-                  </form>
-                  <div class = "schedule_reaction_like">
+                          <p><%= schedule.likes.count %></p>
+                        </div>
+                      </button>
+                    </form>
+                  <% end %>
+                  
+                  <!-- コメントボタン -->
+                  <div class="schedule_reaction_like">
                     <a href="/schedules/<%= schedule.id %>/comment" style="text-decoration: none;">
                       <img src="/img/comment.png" alt="" class="logo" style="vertical-align: bottom;">
                     </a>
@@ -50,7 +55,7 @@
                 </div>
               </div>
             </div>
-            <p class = "post-created-at"><%= schedule.created_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d %H:%M") %></p>
+            <p class="post-created-at"><%= schedule.created_at.in_time_zone('Asia/Tokyo').strftime("%Y/%m/%d %H:%M") %></p>
           </div>
         <% end %>
       </div>
