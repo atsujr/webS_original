@@ -23,7 +23,11 @@
               <div class="schedule_box">
                 <div class="schedule_infomation">
                   <p class="schedule-post-name"><%= schedule.user.display_name %></p>
-                  <p><%= schedule.nlp_input %></p>
+                  <% if !schedule.isopen %>
+                    <p><%= schedule.nlp_input %></p>
+                  <% else %>
+                    <p><%= '*' * schedule.nlp_input.length %></p>
+                  <% end %>
                 </div>
                 <div class="schedule_reaction">
                   <!-- いいねボタン -->

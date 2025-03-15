@@ -188,7 +188,7 @@ post '/add_event_by_nlp' do
   # デフォルトとして今から1時間後などに設定してもよい
   start_time_obj = extracted_info[:start_time] || (Time.now + 3600)
   end_time_obj   = extracted_info[:end_time]   || (Time.now + 7200)
-
+  is_open = extracted_info[:is_open] || false
   event = Google::Apis::CalendarV3::Event.new(
     summary: summary,
     description: description,
@@ -217,7 +217,8 @@ post '/add_event_by_nlp' do
     summary: result.summary,
     start_time: result.start.date_time,  # datetime型のまま保存
     end_time: result.end.date_time,      # datetime型のまま保存
-    nlp_input: nlp_input
+    nlp_input: nlp_input,
+    isopen: is_open
   )
 
   if schedule.persisted?
@@ -272,12 +273,14 @@ def call_chatgpt_and_extract_info(text)
     - 日付が「今日」「明日」「明後日」のように指定されている場合は、上記の日付を基準に計算してください。
     - 「〇時間」や「〇分」などの表記がある場合、開始時間を元に終了時間を計算してください。
     - 終了時間の記載がない場合は、開始時間から1時間後の時間を計算し、終了時間に設定してください。
+    - 予定を非公開にしたいようなニュアンスのプロンプトがあった場合はisopenフィールドにtrueを設定してください。
     形式は必ず JSON で出力してください。例:
     {
       "summary": "会議",
       "start_time": "2025-03-07T10:00:00+09:00",
       "end_time": "2025-03-07T11:00:00+09:00",
-      "description": "田中さんとオンラインで"
+      "description": "田中さんとオンラインで",
+      "isopen": true
     }
   EOS
 
@@ -310,7 +313,7 @@ def call_chatgpt_and_extract_info(text)
 
     start_time_str = json_data["start_time"]
     end_time_str   = json_data["end_time"]
-
+    is_open = json_data["isopen"]
     start_time = start_time_str && !start_time_str.empty? ? Time.parse(start_time_str) : nil
     end_time   = end_time_str   && !end_time_str.empty?   ? Time.parse(end_time_str)   : nil
     p "start_timeとend_time"
@@ -320,7 +323,8 @@ def call_chatgpt_and_extract_info(text)
       summary: summary,
       description: description,
       start_time: start_time,
-      end_time: end_time
+      end_time: end_time,
+      is_open: is_open
     }
   rescue => e
     p e.message
