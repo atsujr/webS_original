@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2025_03_15_023258) do
+ActiveRecord::Schema.define(version: 2025_03_20_033041) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +32,15 @@ ActiveRecord::Schema.define(version: 2025_03_15_023258) do
     t.datetime "updated_at", precision: 6, null: false
     t.index ["schedule_id"], name: "index_likes_on_schedule_id"
     t.index ["user_id"], name: "index_likes_on_user_id"
+  end
+
+  create_table "reserved_words", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "email", null: false
+    t.bigint "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_reserved_words_on_user_id"
   end
 
   create_table "schedules", force: :cascade do |t|
@@ -59,5 +68,6 @@ ActiveRecord::Schema.define(version: 2025_03_15_023258) do
   add_foreign_key "comments", "users"
   add_foreign_key "likes", "schedules"
   add_foreign_key "likes", "users"
+  add_foreign_key "reserved_words", "users"
   add_foreign_key "schedules", "users"
 end

@@ -1,0 +1,45 @@
+<h1  class="reserved_words"  style = "margin-top: 40px; margin-left: 40px; ">予約語を設定</h1>
+<form action="/reserved_words" class="input-area" method="POST" style = "margin-top: 20px;">
+  <div class = "input-area-box">
+    <textarea name="name" class="plan-input" placeholder="名前を入力してください"></textarea>
+    <textarea name="email" class="plan-input" placeholder="メールアドレスを入力してください" style = "margin-top: 20px;"></textarea>
+  </div>
+  <button type="submit" class="add-btn">予約後を追加する</button>
+</form>
+<table>
+<h1  class="reserved_words"  style = "margin-top: 40px; margin-left: 40px; ">設定した予約語</h1>
+  <tr>
+    <th>名前</th>
+    <th>メールアドレス</th>
+  </tr>
+  <% @reserved_words.each do |rw| %>
+    <tr>
+      <td><%= rw.name %></td>
+      <td><%= rw.email %></td>
+      </td>
+    </tr>
+  <% end %>
+</table>
+<style>
+    table {
+      width: 90%;
+      border-collapse: collapse;
+      margin: 20px auto;
+      font-family: sans-serif;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #fafafa;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>

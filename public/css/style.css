@@ -64,9 +64,14 @@ a {
   border-radius: 4px;
   font-size: 0.9rem;
 }
-
-.create-btn:hover {
-  background-color: #0056b3;
+.create-reserve-btn {
+  font-weight: bold;
+  color: #007bff;
+  border: solid 1px #007bff;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 0.9rem;
 }
 
 /* ログイン */

@@ -16,7 +16,11 @@
 		<% if @authorized %>
 			<div class="header-right">
 				<a href="/logout" class="logout-link">Log Out</a>
-				<a href="/"class="create-btn">予定を作成</a>
+        <a href="/reserved_words"class="create-reserve-btn">予約語を設定</a>
+        <a href="/"class="create-btn">予定を作成</a>
+        <a href="https://calendar.google.com/calendar/u/0/r">
+          <img class="profile-image" src="/img/carender.png" alt="carelendar">
+        </a>
 				<a href="/schedule">
           <img class="profile-image" src="<%= @user.profile_image_url %>" alt="User Image">
         </a>

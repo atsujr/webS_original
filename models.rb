@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_many :comments, dependent: :destroy 
   has_many :likes
   has_many :liked_schedules, through: :likes, source: :schedule
+  has_many :reserved_words, dependent: :destroy
 end
 class Schedule < ActiveRecord::Base
   belongs_to :user
@@ -34,3 +35,11 @@ class Comment < ActiveRecord::Base
   belongs_to :user
   belongs_to :schedule
 end
+
+class ReservedWord < ActiveRecord::Base
+  belongs_to :user
+
+  validates :name,  presence: true
+  validates :email, presence: true
+end
+
